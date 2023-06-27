@@ -23,7 +23,7 @@ use bsp::hal::{
 const DUTY_CYCLE_RAISED_ARMS: u16 = 4915; // in theory, position "0"
 const DUTY_CYCLE_LOWERED_ARMS: u16 = 3930; // in theory this should be around "-45"
 
-const AUDIO: &[u8] = include_bytes!("train_crossing.wav");
+const AUDIO: &[u8] = include_bytes!("../train_crossing.wav");
 const AUDIO_SAMPLE_LENGTH: u32 = 41667; // 31250 ns = 32kHz, 41666.666666666664 = 24kHz
 
 /// Stack for core 1
