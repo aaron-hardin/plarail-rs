@@ -1,0 +1,33 @@
+[package]
+name = "plarail"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cortex-m = "0.7"
+cortex-m-rt = "0.7"
+embedded-hal = "0.2"
+embedded-time = "0.12"
+fugit = "0.3"
+panic-reset = "0.1"
+usb-device = "0.2"
+usbd-hid = "0.6"
+critical-section = { version = "1.0.0" }
+
+# currently using a pico
+rp-pico = "0.7"
+
+# If you're not going to use a Board Support Package you'll need these:
+# rp2040-boot2 = "0.3"
+# rp2040-hal = { version = "0.8", features = ["rt", "critical-section-impl"] }
+
+# Dependencies for debug probe
+defmt = "0.3" # Macros and support for deferred formatting logging
+defmt-rtt = "0.4" # Contains a definition for a #[global_logger]
+panic-probe = { version = "0.3", features = ["print-defmt"] }
+
+# Needed to enable DWARF location info
+[profile.release]
+debug = 2
