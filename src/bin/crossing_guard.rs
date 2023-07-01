@@ -154,6 +154,8 @@ fn main() -> ! {
     // Set the duty cycle to 50%
     channel_ir_led.set_duty(duty);
 
+    let mut initialized = 0;
+
     loop {
         if boot_mode_in_pin.is_high().unwrap() {
             let gpio_activity_pin_mask = 0;
@@ -163,24 +165,28 @@ fn main() -> ! {
         }
 
         let mut crossing_detected = false;
-        // TODO: validate that this is how the IR detector works
         if crossing_mode_in_pin.is_high().unwrap() {
-            if !is_crossing_mode {
-                // this is the first time we detected crossing mode, init some things
-                info!("Crossing mode started");
-                led_crossing_0_0.set_high().unwrap();
-                led_crossing_0_1.set_low().unwrap();
-                // (re)start timer for blinking
-                count_down_led_blink.start(1.secs());
-                // lower crossing arms
-                channel_a.set_duty(DUTY_CYCLE_LOWERED_ARMS);
-                channel_b.set_duty(DUTY_CYCLE_LOWERED_ARMS);
-
-                status_led.set_low().unwrap();
+            // TODO: better way of detecting initialization -- ir led takes a little to start up and don't want to false trigger at startup
+            if initialized < 10 {
+                initialized += 1;
+            } else {
+                if !is_crossing_mode {
+                    // this is the first time we detected crossing mode, init some things
+                    info!("Crossing mode started");
+                    led_crossing_0_0.set_high().unwrap();
+                    led_crossing_0_1.set_low().unwrap();
+                    // (re)start timer for blinking
+                    count_down_led_blink.start(1.secs());
+                    // lower crossing arms
+                    channel_a.set_duty(DUTY_CYCLE_LOWERED_ARMS);
+                    channel_b.set_duty(DUTY_CYCLE_LOWERED_ARMS);
+    
+                    status_led.set_low().unwrap();
+                }
+    
+                crossing_detected = true;
+                is_crossing_mode = true;
             }
-
-            crossing_detected = true;
-            is_crossing_mode = true;
         }
 
         match is_crossing_mode {
