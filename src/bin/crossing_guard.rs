@@ -139,6 +139,21 @@ fn main() -> ! {
     let mut idx = 0x2C; // skip the header
     // END audio setup -- crossing sound
 
+    // Configure PWM2 --  IR LED -- 38 khz
+    let pwm_ir_led = &mut pwm_slices.pwm2;
+    pwm_ir_led.default_config();
+    pwm_ir_led.set_ph_correct();
+    pwm_ir_led.set_div_int(1);
+    let top: u16 = (sys_freq / 38_000 / 2).try_into().unwrap();
+    let duty = top / 2;
+    pwm_ir_led.set_top(top);
+    pwm_ir_led.enable();
+    // Output channel A on PWM2 to the GPIO4 pin
+    let channel_ir_led = &mut pwm_ir_led.channel_a;
+    channel_ir_led.output_to(pins.gpio4);
+    // Set the duty cycle to 50%
+    channel_ir_led.set_duty(duty);
+
     loop {
         if boot_mode_in_pin.is_high().unwrap() {
             let gpio_activity_pin_mask = 0;
